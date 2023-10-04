@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:caller_id/call_state.dart';
 import 'package:caller_id/calling_data.dart';
 import 'package:flutter/services.dart';
@@ -37,7 +38,7 @@ class CallerIdSdk {
       switch (event['call_state']) {
         case "incoming":
           state = CallState.incomingCall;
-          String phone = event['[phone]'] ?? "";
+          String phone = event['phone'] ?? "";
           data = CallingData(callState: state, phoneNumber: phone);
           break;
         case "idle":
