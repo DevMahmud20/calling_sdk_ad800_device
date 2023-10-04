@@ -54,8 +54,13 @@ class _MyAppState extends State<MyApp> {
               StreamBuilder<CallingData>(
                   stream: _callerIdSdk.addCallingStateListener(),
                   builder: (context, snapshot) {
-                    CallingData data = snapshot.data!;
-                    return Text("Calling state: ${data.callState.name}");
+                    CallingData? data = snapshot.data;
+                    return Column(
+                      children: [
+                        Text("Calling state: ${data?.callState.name}"),
+                        Text("Calling state: ${data?.phoneNumber}"),
+                      ],
+                    );
                   })
             ],
           ),

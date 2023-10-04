@@ -39,6 +39,7 @@ class CallerIdSdk {
         case "incoming":
           state = CallState.incomingCall;
           String phone = event['phone'] ?? "";
+          print("------------(caller_id_sdk) phone: $phone");
           data = CallingData(callState: state, phoneNumber: phone);
           break;
         case "idle":

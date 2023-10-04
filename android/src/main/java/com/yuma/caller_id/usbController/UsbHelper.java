@@ -265,6 +265,7 @@ public class UsbHelper {
             Map<String, String> map= new HashMap<>();
             map.put("call_state", "incoming");
             map.put("phone",UsbHelper.channelList.get(selectedChannel).CallerId);
+            //Toast.makeText(context, UsbHelper.channelList.get(selectedChannel).CallerId, Toast.LENGTH_SHORT).show();
             callingListener.success(map);
         }else if(status ==0){
             Map<String, String> map= new HashMap<>();
