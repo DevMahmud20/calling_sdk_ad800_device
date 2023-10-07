@@ -31,6 +31,16 @@ public class MethodChannelHandler extends FlutterActivity implements MethodChann
                 usbHelper.initUSB();
                 result.success("connected");
                 break;
+            case "disconnect":
+                usbHelper.disconnectAll();
+                result.success("disconnected");
+                break;
+            case "lineBusy":
+                usbHelper.lineBusy();
+                break;
+            case "hangup":
+                usbHelper.hangup();
+                break;
             default:
                 result.notImplemented();
                 break;

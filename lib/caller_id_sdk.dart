@@ -19,6 +19,30 @@ class CallerIdSdk {
     }
   }
 
+  Future<void> lineBusy() async {
+    try {
+      return await _channel.invokeMethod("lineBusy");
+    } catch (e) {
+      throw FormatException("Error on Line Busy. $e");
+    }
+  }
+
+  Future<void> hangUp() async {
+    try {
+      return await _channel.invokeMethod("hangup");
+    } catch (e) {
+      throw FormatException("Error on Line hangup. $e");
+    }
+  }
+
+  Future<void> disconnect() async {
+    try {
+      return await _channel.invokeMethod("disconnect");
+    } catch (e) {
+      throw FormatException("Error on disconnect: $e");
+    }
+  }
+
   Stream<bool> addConnectionListener() {
     return _connectionListener.receiveBroadcastStream().map((event) {
       bool state = false;
