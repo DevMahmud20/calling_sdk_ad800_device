@@ -31,14 +31,8 @@ import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.os.Message;
-import android.util.Log;
-
-
-import com.yuma.caller_id.BaseActivity;
-import com.yuma.caller_id.EventChannelHelper;
 import com.yuma.caller_id.utils.ADPCM_STATE;
 import com.yuma.caller_id.utils.BytesTransUtil;
-import com.yuma.caller_id.utils.CallReceiver;
 import com.yuma.caller_id.utils.Constants;
 import com.yuma.caller_id.utils.DtmfData;
 import com.yuma.caller_id.utils.FileLog;
@@ -331,19 +325,19 @@ public class UsbController {
              *  Display first time line status
              */
 
-            for (int i = 0; i < 8; i++) {
-                Message msg = new Message();
-                msg.what = Constants.AD800_LINE_STATUS;
-                msg.arg1 = i;
-                msg.arg2 = UsbHelper.channelList.get(i).m_State;
-                UsbHelper.DeviceMsgHandler.sendMessage(msg);
-            }
+//            for (int i = 0; i < 8; i++) {
+//                Message msg = new Message();
+//                msg.what = Constants.AD800_LINE_STATUS;
+//                msg.arg1 = i;
+//                msg.arg2 = UsbHelper.channelList.get(i).m_State;
+//                UsbHelper.DeviceMsgHandler.sendMessage(msg);
+//            }
 
-//			Message msg = new Message();
-//			msg.what = Constants.AD800_LINE_STATUS;
-//			msg.arg1 = 0;
-//			msg.arg2 = UsbHelper.mainChannel.m_State;
-//			UsbHelper.DeviceMsgHandler.sendMessage(msg);
+			Message msg = new Message();
+			msg.what = Constants.AD800_LINE_STATUS;
+			msg.arg1 = 0;
+			msg.arg2 = UsbHelper.channelList.get(0).m_State;
+			UsbHelper.DeviceMsgHandler.sendMessage(msg);
 
             l("handler init end");
         } catch (Exception e) {
@@ -815,7 +809,7 @@ public class UsbController {
                                     if (UsbHelper.context != null) {
                                         Message msg = new Message();
                                         msg.what = Constants.AD800_LINE_STATUS;  //STATE_EVENT
-                                        msg.arg1 = i;
+                                        msg.arg1 = i ;
                                         msg.arg2 = UsbHelper.channelList.get(i).m_State;
                                         UsbHelper.DeviceMsgHandler.sendMessage(msg);
                                     }

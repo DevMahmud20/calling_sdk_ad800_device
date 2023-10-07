@@ -13,7 +13,6 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.yuma.caller_id.BaseActivity;
 import com.yuma.caller_id.EventChannelHelper;
 import com.yuma.caller_id.model.Channel;
 import com.yuma.caller_id.utils.CallReceiver;
@@ -261,7 +260,7 @@ public class UsbHelper {
         if (status == 1) {
             Map<String, String> map= new HashMap<>();
             map.put("call_state", "incoming");
-            map.put("phone",UsbHelper.channelList.get(selectedChannel + 1).CallerId);
+            map.put("phone",UsbHelper.channelList.get(selectedChannel).CallerId);
             //Toast.makeText(context, UsbHelper.channelList.get(selectedChannel).CallerId, Toast.LENGTH_SHORT).show();
             callingListener.success(map);
         }else if(status ==0){
