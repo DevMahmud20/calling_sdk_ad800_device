@@ -34,7 +34,7 @@ public class UsbHelper {
     public static Context context;
     public static String DeviceSN = "", DeviceVer = "";            //Device Serial Number and Device Version
     public static List<Channel> channelList = new ArrayList<Channel>();        //Channel List
-    public static int selectedChannel = 0;//Selected Channel Number
+    public static int selectedChannel = -1;//Selected Channel Number
     private UsbManager mManager;
     public List<DeviceID> devices = new ArrayList<DeviceID>();
     public static UsbController sUsbController = null;
@@ -61,7 +61,7 @@ public class UsbHelper {
             FileLog.open(LogFile.getAbsolutePath(), Log.VERBOSE, 1000000);
             FileLog.v("FileLog", "start");
         }
-        selectedChannel = 0;
+        selectedChannel = -1;
         channelList.clear();
         for (int i = 0; i < 8; i++) {
             Channel channel = new Channel();
