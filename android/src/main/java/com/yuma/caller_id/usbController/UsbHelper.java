@@ -227,6 +227,7 @@ public class UsbHelper {
                         case Constants.CHANNELSTATE_RINGOFF:
                             channelList.get(iChannel).LineStatus = "Ring Off";
                             Log.e(TAG, "handleMessage: Ring off");//ring
+                            sendBroadCast(1);
                             break;
                         case Constants.CHANNELSTATE_ANSWER:
                             channelList.get(iChannel).LineStatus = "Incoming Call";  //Answer		hook off
@@ -271,13 +272,13 @@ public class UsbHelper {
         if (status == 1) {
             Map<String, String> map= new HashMap<>();
             map.put("call_state", "incoming");
-            map.put("phone",UsbHelper.channelList.get(selectedChannel).CallerId);
+            map.put("phone",UsbHelper.channelList.get(selectedChannel).CallerId.replaceAll("[^\\d.]", ""));
             //Toast.makeText(context, UsbHelper.channelList.get(selectedChannel).CallerId, Toast.LENGTH_SHORT).show();
             callingListener.success(map);
         }else if(status ==0){
             Map<String, String> map= new HashMap<>();
             map.put("call_state", "idle");
-            map.put("phone",UsbHelper.channelList.get(selectedChannel).CallerId);
+            map.put("phone",UsbHelper.channelList.get(selectedChannel).CallerId.replaceAll("[^\\d.]", ""));
             callingListener.success(map);
         }else {
             callingListener.error("400", "Error", "Calling error");
