@@ -1,7 +1,8 @@
+import 'dart:async';
+
 import 'package:caller_id/caller_id_sdk.dart';
 import 'package:caller_id/calling_data.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
 
 void main() {
   runApp(const MyApp());
@@ -58,7 +59,7 @@ class _MyAppState extends State<MyApp> {
                     return Column(
                       children: [
                         Text("Calling state: ${data?.callState.name}"),
-                        Text("Calling state: ${data?.phoneNumber}"),
+                        Text("Phone Number: ${data?.phoneNumber}"),
                       ],
                     );
                   })

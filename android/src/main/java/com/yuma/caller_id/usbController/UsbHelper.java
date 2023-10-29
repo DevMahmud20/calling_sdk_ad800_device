@@ -30,14 +30,15 @@ import java.util.concurrent.TimeUnit;
 public class UsbHelper {
     private static final String TAG = UsbHelper.class.getSimpleName();
     public static Context context;
-    public static String DeviceSN = "", DeviceVer = "";			//Device Serial Number and Device Version
-    public static List<Channel> channelList = new ArrayList<Channel>();		//Channel List
+    public static String DeviceSN = "", DeviceVer = "";            //Device Serial Number and Device Version
+    public static List<Channel> channelList = new ArrayList<Channel>();        //Channel List
     public static int selectedChannel = -1;
     private final EventChannelHelper connectionListener;
     private static EventChannelHelper callingListener;
     private UsbManager mManager;
     public List<DeviceID> devices = new ArrayList<DeviceID>();
     public static UsbController sUsbController = null;
+    public static int callingStatus = 0;
 
 
     public UsbHelper(Context context, EventChannelHelper connectionListener, EventChannelHelper callingListener) {
@@ -88,28 +89,28 @@ public class UsbHelper {
         }
     }
 
-    public void lineBusy(){
-        if(sUsbController != null){
+    public void lineBusy() {
+        if (sUsbController != null) {
             sUsbController.SendPickUpCommand(selectedChannel);
         }
     }
 
-    public void hangup(){
-        if(sUsbController != null){
+    public void hangup() {
+        if (sUsbController != null) {
             sUsbController.SendHangUpCommand(selectedChannel);
         }
     }
 
-    public void disconnectAll(){
+    public void disconnectAll() {
         FileLog.v(TAG, "Activity is destroyed");
         FileLog.close();
         context.unregisterReceiver(mUsbReceiver);
         try {
-            if(sUsbController != null){
+            if (sUsbController != null) {
                 sUsbController.stop();
                 sUsbController = null;
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             FileLog.v("Destory", "UsbController " + e.getLocalizedMessage());
         }
     }
@@ -123,7 +124,7 @@ public class UsbHelper {
                 sUsbController = new UsbController(context, mConnectionHandler, devices);
             }
             Toast.makeText(context, "Device Connected", Toast.LENGTH_LONG).show();
-            Map<String, String> map= new HashMap<>();
+            Map<String, String> map = new HashMap<>();
             map.put("connection_state", "connected");
             connectionListener.success(map);
         } else {
@@ -134,7 +135,7 @@ public class UsbHelper {
             deviceDataInit();
             Toast.makeText(context, "Connection lost", Toast.LENGTH_LONG).show();
             //connectionListener.error("400", "Disconnected", "Failed");
-            Map<String, String> map= new HashMap<>();
+            Map<String, String> map = new HashMap<>();
             map.put("connection_state", "disconnected");
             connectionListener.success(map);
         }
@@ -201,37 +202,45 @@ public class UsbHelper {
         public void handleMessage(Message msg) {
             int iChannel = msg.arg1;
             selectedChannel = iChannel;
+
             switch (msg.what) {
                 case Constants.AD800_LINE_STATUS:
                     switch (msg.arg2) {
+
                         case Constants.CHANNELSTATE_POWEROFF:
                             UsbHelper.channelList.get(iChannel).LineStatus = "Disconnect";
                             break;
                         case Constants.CHANNELSTATE_IDLE:
+                            Log.e(TAG, "---------handleMessage: CHANNELSTATE_IDLE");
                             if (!UsbHelper.channelList.get(iChannel).CallerId.isEmpty()) {
 
 //                                SharedPrefManager.addNewCall(context,new CallerHistoryModel(channelList.get(iChannel).CallerId, System.currentTimeMillis() + "",null));
                             }
                             channelList.get(iChannel).LineStatus = "Idle";            //hook on
-                            channelList.get(iChannel).CallerId = "";
-                            channelList.get(iChannel).Dtmf = "";
+                           // channelList.get(iChannel).CallerId = "";
+                            //channelList.get(iChannel).Dtmf = "";
+                            callingStatus = 0;
                             sendBroadCast(0);
                             break;
                         case Constants.CHANNELSTATE_PICKUP:
                             channelList.get(iChannel).LineStatus = "Dialing";        //hook off
                             break;
                         case Constants.CHANNELSTATE_RINGON:
+                            Log.e(TAG, "---------handleMessage: CHANNELSTATE_RINGON");
                             channelList.get(iChannel).LineStatus = "Ring On";//ring
-                            sendBroadCast(1);
+                            if (callingStatus != 1) {
+                                sendBroadCast(1);
+                            }
                             break;
                         case Constants.CHANNELSTATE_RINGOFF:
+                            Log.e(TAG, "---------handleMessage: CHANNELSTATE_RINGOFF");
                             channelList.get(iChannel).LineStatus = "Ring Off";
-                            Log.e(TAG, "handleMessage: Ring off");//ring
                             sendBroadCast(1);
                             break;
                         case Constants.CHANNELSTATE_ANSWER:
                             channelList.get(iChannel).LineStatus = "Incoming Call";  //Answer		hook off
-                            sendBroadCast(1);
+
+                            if (callingStatus != 1) sendBroadCast(1);
                             break;
                         case Constants.CHANNELSTATE_OUTGOING:
                             channelList.get(iChannel).LineStatus = "Outgoing Call";  //	hook off
@@ -263,24 +272,26 @@ public class UsbHelper {
     };
 
     public static void sendBroadCast(int status) {
+        callingStatus = status;
         Intent i = new Intent("PHONE_CALL");
         i.putExtra("Number", UsbHelper.channelList.get(selectedChannel).CallerId);
         i.putExtra("LineStatus", UsbHelper.channelList.get(selectedChannel).LineStatus);
         i.putExtra("CallerId", UsbHelper.channelList.get(selectedChannel).CallerId);
         i.putExtra("state", status);
+        //Toast.makeText(context, UsbHelper.channelList.get(selectedChannel).CallerId, Toast.LENGTH_SHORT).show();
         context.sendBroadcast(i);
         if (status == 1) {
-            Map<String, String> map= new HashMap<>();
+            Map<String, String> map = new HashMap<>();
             map.put("call_state", "incoming");
-            map.put("phone",UsbHelper.channelList.get(selectedChannel).CallerId.replaceAll("[^\\d.]", ""));
+            map.put("phone", UsbHelper.channelList.get(selectedChannel).CallerId.replaceAll("[^\\d.]", ""));
             //Toast.makeText(context, UsbHelper.channelList.get(selectedChannel).CallerId, Toast.LENGTH_SHORT).show();
             callingListener.success(map);
-        }else if(status ==0){
-            Map<String, String> map= new HashMap<>();
+        } else if (status == 0) {
+            Map<String, String> map = new HashMap<>();
             map.put("call_state", "idle");
-            map.put("phone",UsbHelper.channelList.get(selectedChannel).CallerId.replaceAll("[^\\d.]", ""));
+            map.put("phone", UsbHelper.channelList.get(selectedChannel).CallerId.replaceAll("[^\\d.]", ""));
             callingListener.success(map);
-        }else {
+        } else {
             callingListener.error("400", "Error", "Calling error");
         }
     }
