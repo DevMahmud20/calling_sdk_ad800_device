@@ -70,6 +70,11 @@ class CallerIdSdk {
           state = CallState.idle;
           data = CallingData(callState: state, phoneNumber: null);
           break;
+        case "answer":
+          String phone = event['phone'] ?? "";
+          state = CallState.answered;
+          data = CallingData(callState: state, phoneNumber: phone);
+          break;
         default:
           state = CallState.error;
           data = CallingData(callState: state, phoneNumber: null);

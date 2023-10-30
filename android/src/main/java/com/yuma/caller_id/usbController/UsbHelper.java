@@ -209,6 +209,7 @@ public class UsbHelper {
 
                         case Constants.CHANNELSTATE_POWEROFF:
                             UsbHelper.channelList.get(iChannel).LineStatus = "Disconnect";
+                            Log.e(TAG, "---------handleMessage: CHANNELSTATE_POWEROFF");
                             break;
                         case Constants.CHANNELSTATE_IDLE:
                             Log.e(TAG, "---------handleMessage: CHANNELSTATE_IDLE");
@@ -223,7 +224,8 @@ public class UsbHelper {
                             sendBroadCast(0);
                             break;
                         case Constants.CHANNELSTATE_PICKUP:
-                            channelList.get(iChannel).LineStatus = "Dialing";        //hook off
+                            channelList.get(iChannel).LineStatus = "Dialing";
+                            Log.e(TAG, "---------handleMessage: CHANNELSTATE_PICKUP");//hook off
                             break;
                         case Constants.CHANNELSTATE_RINGON:
                             Log.e(TAG, "---------handleMessage: CHANNELSTATE_RINGON");
@@ -238,8 +240,8 @@ public class UsbHelper {
                             sendBroadCast(1);
                             break;
                         case Constants.CHANNELSTATE_ANSWER:
-                            channelList.get(iChannel).LineStatus = "Incoming Call";  //Answer		hook off
-
+                            Log.e(TAG, "---------handleMessage: CHANNELSTATE_ANSWER");
+                            channelList.get(iChannel).LineStatus = "Incoming Call";  //Answer
                             if (callingStatus != 1) sendBroadCast(1);
                             break;
                         case Constants.CHANNELSTATE_OUTGOING:
@@ -281,8 +283,10 @@ public class UsbHelper {
         //Toast.makeText(context, UsbHelper.channelList.get(selectedChannel).CallerId, Toast.LENGTH_SHORT).show();
         context.sendBroadcast(i);
         if (status == 1) {
+
+            String lineStatus =  UsbHelper.channelList.get(selectedChannel).LineStatus;
             Map<String, String> map = new HashMap<>();
-            map.put("call_state", "incoming");
+            map.put("call_state", lineStatus.equals("Incoming Call") ? "answer" : "incoming");
             map.put("phone", UsbHelper.channelList.get(selectedChannel).CallerId.replaceAll("[^\\d.]", ""));
             //Toast.makeText(context, UsbHelper.channelList.get(selectedChannel).CallerId, Toast.LENGTH_SHORT).show();
             callingListener.success(map);

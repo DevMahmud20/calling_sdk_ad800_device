@@ -2,6 +2,7 @@
 
 enum CallState{
   incomingCall, 
-  idle, 
+  idle,
+  answered, 
   error
 }
