@@ -217,8 +217,8 @@ public class UsbHelper {
 //                                SharedPrefManager.addNewCall(context,new CallerHistoryModel(channelList.get(iChannel).CallerId, System.currentTimeMillis() + "",null));
                             }
                             channelList.get(iChannel).LineStatus = "Idle";            //hook on
-                           // channelList.get(iChannel).CallerId = "";
-                            //channelList.get(iChannel).Dtmf = "";
+                            channelList.get(iChannel).CallerId = "";
+                            channelList.get(iChannel).Dtmf = "";
                             callingStatus = 0;
                             sendBroadCast(0);
                             break;
