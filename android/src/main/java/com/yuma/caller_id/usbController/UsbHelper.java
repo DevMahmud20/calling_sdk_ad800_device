@@ -206,7 +206,6 @@ public class UsbHelper {
             switch (msg.what) {
                 case Constants.AD800_LINE_STATUS:
                     switch (msg.arg2) {
-
                         case Constants.CHANNELSTATE_POWEROFF:
                             UsbHelper.channelList.get(iChannel).LineStatus = "Disconnect";
                             Log.e(TAG, "---------handleMessage: CHANNELSTATE_POWEROFF");
@@ -229,6 +228,7 @@ public class UsbHelper {
                             break;
                         case Constants.CHANNELSTATE_RINGON:
                             Log.e(TAG, "---------handleMessage: CHANNELSTATE_RINGON");
+                            Log.e(TAG, "---------handleMessage: ringOn: " + channelList.get(iChannel).CallerId);
                             channelList.get(iChannel).LineStatus = "Ring On";//ring
                             if (callingStatus != 1) {
                                 sendBroadCast(1);
@@ -236,6 +236,7 @@ public class UsbHelper {
                             break;
                         case Constants.CHANNELSTATE_RINGOFF:
                             Log.e(TAG, "---------handleMessage: CHANNELSTATE_RINGOFF");
+                            Log.e(TAG, "---------handleMessage: ringOff: " + channelList.get(iChannel).CallerId);
                             channelList.get(iChannel).LineStatus = "Ring Off";
                             sendBroadCast(1);
                             break;
@@ -250,7 +251,6 @@ public class UsbHelper {
                         default:
                             break;
                     }
-
                     break;
                 case Constants.AD800_LINE_VOLTAGE:            //TheApp.channelList.get(iChannel).LineVoltage
                     int oldVoltage = UsbHelper.channelList.get(iChannel).LineVoltage;
@@ -262,6 +262,9 @@ public class UsbHelper {
                 case Constants.AD800_DEVICE_CONNECTION:
                 case Constants.AD800_LINE_POLARITY:
                 case Constants.AD800_LINE_CALLERID:
+                    Log.e(TAG, "-------------handleMessage: AD800_LINE_CALLERID: " + channelList.get(selectedChannel).CallerId);
+                    sendBroadCast(1);
+                    break;
                 case Constants.AD800_LINE_DTMF:
                 case Constants.AD800_REC_DATA:
                 case Constants.AD800_PLAY_FINISHED:
@@ -283,8 +286,7 @@ public class UsbHelper {
         //Toast.makeText(context, UsbHelper.channelList.get(selectedChannel).CallerId, Toast.LENGTH_SHORT).show();
         context.sendBroadcast(i);
         if (status == 1) {
-
-            String lineStatus =  UsbHelper.channelList.get(selectedChannel).LineStatus;
+            String lineStatus = UsbHelper.channelList.get(selectedChannel).LineStatus;
             Map<String, String> map = new HashMap<>();
             map.put("call_state", lineStatus.equals("Incoming Call") ? "answer" : "incoming");
             map.put("phone", UsbHelper.channelList.get(selectedChannel).CallerId.replaceAll("[^\\d.]", ""));
