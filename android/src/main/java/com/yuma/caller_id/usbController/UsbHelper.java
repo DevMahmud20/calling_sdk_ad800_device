@@ -286,9 +286,14 @@ public class UsbHelper {
         //Toast.makeText(context, UsbHelper.channelList.get(selectedChannel).CallerId, Toast.LENGTH_SHORT).show();
         context.sendBroadcast(i);
         if (status == 1) {
-            String lineStatus = UsbHelper.channelList.get(selectedChannel).LineStatus;
+            String lineStatus = "";
+            if (UsbHelper.channelList.get(selectedChannel).LineStatus.equals("Incoming Call")){
+                lineStatus = "answer";
+            }else {
+                lineStatus = "incoming";
+            }
             Map<String, String> map = new HashMap<>();
-            map.put("call_state", lineStatus.equals("Incoming Call") ? "answer" : "incoming");
+            map.put("call_state", lineStatus);
             map.put("phone", UsbHelper.channelList.get(selectedChannel).CallerId.replaceAll("[^\\d.]", ""));
             //Toast.makeText(context, UsbHelper.channelList.get(selectedChannel).CallerId, Toast.LENGTH_SHORT).show();
             callingListener.success(map);
