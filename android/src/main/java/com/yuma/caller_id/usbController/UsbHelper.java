@@ -243,7 +243,9 @@ public class UsbHelper {
                         case Constants.CHANNELSTATE_ANSWER:
                             Log.e(TAG, "---------handleMessage: CHANNELSTATE_ANSWER");
                             channelList.get(iChannel).LineStatus = "Incoming Call";  //Answer
-                            if (callingStatus != 1) sendBroadCast(1);
+//                            if (callingStatus != 1) sendBroadCast(1);
+                            //Toast.makeText(context, UsbHelper.channelList.get(selectedChannel).LineStatus, Toast.LENGTH_SHORT).show();
+                            sendBroadCast(1);
                             break;
                         case Constants.CHANNELSTATE_OUTGOING:
                             channelList.get(iChannel).LineStatus = "Outgoing Call";  //	hook off
@@ -295,7 +297,7 @@ public class UsbHelper {
             Map<String, String> map = new HashMap<>();
             map.put("call_state", lineStatus);
             map.put("phone", UsbHelper.channelList.get(selectedChannel).CallerId.replaceAll("[^\\d.]", ""));
-            //Toast.makeText(context, UsbHelper.channelList.get(selectedChannel).CallerId, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, UsbHelper.channelList.get(selectedChannel).LineStatus, Toast.LENGTH_SHORT).show();
             callingListener.success(map);
         } else if (status == 0) {
             Map<String, String> map = new HashMap<>();

@@ -57,6 +57,7 @@ class CallerIdSdk {
 
   Stream<CallingData> addCallingStateListener() {
     return _callingListener.receiveBroadcastStream().map((event) {
+      print("-----------stat: ${event['call_state']}");
       CallingData data = CallingData();
       CallState state = CallState.idle;
       switch (event['call_state']) {
